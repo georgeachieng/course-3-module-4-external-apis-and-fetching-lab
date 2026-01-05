@@ -2,89 +2,88 @@
 //const weatherApi = "https://api.weather.gov/alerts/active?area="
 
 // Your code here!
-
-async function fetchWeatherAlerts(state) {
+// Fetch weather data based on city input
+async function fetchWeatherData(city) {
   try {
-    const response = await fetch(`https://api.weather.gov/alerts/active?area=${state}`);
-    if (!response.ok) throw new Error("Network response was not ok");
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=YOUR_API_KEY&units=metric`
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
     const data = await response.json();
-    console.log("Weather Alerts Data:", data); 
-    displayAlerts(data, state);
+    console.log("Weather Data:", data); // for testing
+    displayWeather(data);
   } catch (errorObject) {
-    showError(errorObject.message);
+    displayError(errorObject.message);
   }
 }
 
-
-function displayAlerts(data, state) {
-  const alertsList = document.getElementById("alerts");
-  const summaryEl = document.getElementById("summary");
+// Display weather details in the DOM
+function displayWeather(data) {
+  const weatherEl = document.getElementById("weather-display");
   const errorEl = document.getElementById("error-message");
-  const loadingEl = document.getElementById("loading");
+  const loadingEl = document.getElementById("loading-spinner");
 
-  
-  alertsList.innerHTML = "";
-  summaryEl.textContent = "";
+  // Clear previous content
+  weatherEl.innerHTML = "";
   errorEl.textContent = "";
   errorEl.classList.add("hidden");
   loadingEl.classList.add("hidden");
 
-  if (!data || !Array.isArray(data.features) || data.features.length === 0) {
-    showError("No active alerts for this state.");
+  if (!data || !data.main) {
+    displayError("No weather data available.");
     return;
   }
 
-  
-  const stateTitle = data.title || state;
-  summaryEl.textContent = `Current watches, warnings, and advisories for ${stateTitle}: ${data.features.length}`;
+  // Build weather details
+  const temp = document.createElement("p");
+  temp.textContent = `Temperature: ${data.main.temp} °C`;
 
-  
-  data.features.forEach(alert => {
-    const li = document.createElement("li");
-    li.textContent = alert.properties.headline;
-    alertsList.appendChild(li);
-  });
+  const humidity = document.createElement("p");
+  humidity.textContent = `Humidity: ${data.main.humidity}%`;
+
+  const description = document.createElement("p");
+  description.textContent = `Conditions: ${data.weather[0].description}`;
+
+  weatherEl.appendChild(temp);
+  weatherEl.appendChild(humidity);
+  weatherEl.appendChild(description);
 }
 
-
-function showError(message) {
+// Display error messages
+function displayError(message) {
   const errorEl = document.getElementById("error-message");
-  const loadingEl = document.getElementById("loading");
+  const loadingEl = document.getElementById("loading-spinner");
   errorEl.textContent = message;
   errorEl.classList.remove("hidden");
   loadingEl.classList.add("hidden");
 }
 
-
+// Form listener
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("alert-form");
-  const stateInput = document.getElementById("state");
-  const loadingEl = document.getElementById("loading");
+  const form = document.getElementById("weather-form");
+  const cityInput = document.getElementById("city-input");
+  const loadingEl = document.getElementById("loading-spinner");
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    
-    document.getElementById("alerts").innerHTML = "";
-    document.getElementById("summary").textContent = "";
-    document.getElementById("error-message").textContent = "";
-    document.getElementById("error-message").classList.add("hidden");
-
-    const state = stateInput.value.trim().toUpperCase();
-
-    
-    if (!/^[A-Z]{2}$/.test(state)) {
-      showError("Please enter a valid 2-letter state abbreviation (e.g., CA, TX).");
+    const city = cityInput.value.trim();
+    if (!city) {
+      displayError("Please enter a city name.");
       return;
     }
 
-    
+    // Show loading indicator
     loadingEl.classList.remove("hidden");
 
-    
-    fetchWeatherAlerts(state);
+    // Fetch weather data
+    fetchWeatherData(city);
 
-    
-    stateInput.value = "";
+    // Clear input field
+    cityInput.value = "";
   });
 });
