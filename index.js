@@ -3,6 +3,7 @@
 
 // Your code here!
 // Fetch weather data based on city input
+// Fetch weather data based on city input
 async function fetchWeatherData(city) {
   try {
     const response = await fetch(
@@ -62,12 +63,40 @@ function displayError(message) {
   loadingEl.classList.add("hidden");
 }
 
-// Form listener
+// Generate a random valid color
+function changeBackgroundColor() {
+  const randomColor = `rgb(${Math.floor(Math.random() * 256)}, 
+                           ${Math.floor(Math.random() * 256)}, 
+                           ${Math.floor(Math.random() * 256)})`;
+  document.body.style.backgroundColor = randomColor;
+}
+
+// Reset background color
+function resetBackgroundColor() {
+  document.body.style.backgroundColor = "";
+}
+
+// Display key press directly
+function displayKeyPress(key) {
+  const keyDisplay = document.getElementById("key-display");
+  keyDisplay.textContent = `Key pressed: ${key}`;
+}
+
+// Display user input directly
+function displayUserInput(value) {
+  const inputDisplay = document.getElementById("input-display");
+  inputDisplay.textContent = `Input: ${value}`;
+}
+
+// Event listeners
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("weather-form");
   const cityInput = document.getElementById("city-input");
   const loadingEl = document.getElementById("loading-spinner");
+  const colorBtn = document.getElementById("color-btn");
+  const inputField = document.getElementById("user-input");
 
+  // Weather form submit
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -85,5 +114,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Clear input field
     cityInput.value = "";
+  });
+
+  // Background color events
+  colorBtn.addEventListener("click", changeBackgroundColor);
+  colorBtn.addEventListener("dblclick", resetBackgroundColor);
+
+  // Keydown event
+  document.addEventListener("keydown", (e) => {
+    displayKeyPress(e.key);
+  });
+
+  // Input event
+  inputField.addEventListener("input", (e) => {
+    displayUserInput(e.target.value);
   });
 });

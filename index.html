@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
+  <title>Interactive Weather & Events App</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Weather App</h1>
+  <h1>Interactive Weather & Events App</h1>
 
-  <!-- Input and Button -->
+  <!-- Weather Form -->
   <form id="weather-form">
     <input type="text" id="city-input" name="city" placeholder="Enter city name" required>
     <button id="fetch-weather" type="submit">Get Weather</button>
@@ -23,6 +23,14 @@
 
   <!-- Weather display -->
   <div id="weather-display"></div>
+
+  <!-- Background Color Controls -->
+  <button id="color-btn">Change Background Color</button>
+
+  <!-- Key & Input Display -->
+  <p id="key-display">Key pressed: </p>
+  <input type="text" id="user-input" placeholder="Type something...">
+  <p id="input-display">Input: </p>
 
   <script src="index.js"></script>
 </body>
